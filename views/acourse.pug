@@ -1,0 +1,113 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title #{eachcourseinfo.coursenickname} Course
+    style.
+      .maindiv {
+        /* box-sizing: border-box; */
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        /* border: 1px solid; */
+      }
+      .contentdiv {
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        /* border: 1px solid; */
+      }
+      .subhead1 {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: xx-large;
+        color: rgb(204, 85, 64);
+      }
+      .subheadp {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: large;
+        color: black;
+      }
+      .subhead2 {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: xx-large;
+        color: rgb(204, 85, 64);
+      }
+      .lis {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: large;
+        color: black;
+      }
+      .stuffdiv {
+        width: 55%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+      }
+      .subscribe {
+        cursor: pointer;
+        font-size: 25px;
+        background-color: rgb(110, 0, 0);
+        color: white;
+        border-radius: 5px;
+        border: 1px solid rgb(110, 0, 0);
+      }
+      iframe {
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      }
+      .title {
+        font-size: 40px;
+        font-style: inherit;
+        color: rgb(204, 85, 64);
+      }
+      .tddiv {
+        width: 100%;
+        box-sizing: border-box;
+        /* border: 1px solid; */
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+      }
+      .typebutton {
+        border-radius: 5px;
+        border: 1px solid cadetblue;
+        font-size: large;
+        color: white;
+        background-color: cadetblue;
+      }
+      .durationbutton {
+        border-radius: 5px;
+        border: 1px solid rgb(160, 95, 107);
+        font-size: large;
+        color: white;
+        background-color: rgb(160, 95, 107);
+      }
+      .pricebutton {
+        border-radius: 5px;
+        border: 1px solid rgb(158, 160, 95);
+        font-size: large;
+        color: white;
+        background-color: rgb(158, 160, 95);
+      }
+  body
+    h1.title #{eachcourseinfo.coursenickname} Course
+    .tddiv
+      button.typebutton= eachcourseinfo.coursetype
+      button.durationbutton #{eachcourseinfo.courseduration} months
+      button.pricebutton &#x20B9;#{eachcourseinfo.courseprice}
+    .maindiv
+      .contentdiv
+        h3.subhead1 Course Description
+        p.subheadp #{eachcourseinfo.coursedescription}
+        h3.subhead2 What you'll learn
+        ul
+          each roughinfo in eachcourseinfo.courseroughtopics
+            li.lis= roughinfo
+        //- p #{eachcourseinfo.courseroughtopics}
+      .stuffdiv
+        iframe(width='560', height='315', src=`${eachcourseinfo.coursesamplevideo}`, title='YouTube video player', frameborder='0', allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share', referrerpolicy='strict-origin-when-cross-origin', allowfullscreen='')
+        form(action=`/subscribe/${eachcourseinfo.coursename}`)
+          button.subscribe Subscribe

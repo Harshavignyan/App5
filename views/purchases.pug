@@ -1,0 +1,100 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    // <title>Document</title>
+    style.
+      .title {
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .maindiv {
+        margin-top: 5%;
+        display: flex;
+        justify-content: center;
+      }
+      .table {
+        font-family: 'Times New Roman', Times, serif;
+        /* border: 1px solid; */
+        width: 60%;
+        text-align: center;
+      }
+      th {
+        font-size: xx-large;
+      }
+      td {
+        /* border: 1px solid; */
+        font-size: x-large;
+      }
+      tr {
+        /* border: 1px solid; */
+        height: 55px;
+      }
+      .courses {
+        background-color: #2774AE;
+        width: 50%;
+        height: 45px;
+        font-size: 22px;
+        color: white;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .approve {
+        width: 50%;
+        height: 45px;
+        font-size: 22px;
+        color: white;
+        background-color: #009150;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .approve:hover {
+        cursor: pointer;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        transition: transform 0.1s ease;
+        transform: translateY(-2px);
+      }
+      .decline {
+        width: 50%;
+        height: 45px;
+        font-size: 22px;
+        color: white;
+        background-color: #C80815;
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .decline:hover {
+        cursor: pointer;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        transition: transform 0.1s ease;
+        transform: translateY(-2px);
+      }
+      .initial-links a {
+                margin-right: 1%; /* Add space to the right of each link */
+            }
+  body
+    h1.title Courses Purchased
+    div.initial-links
+            a(href="/") Home
+            a(href="/admin/register") Add Admin
+            a(href="/admin/addcourse") Add Course
+            a(href="/admin/approve") Approve Purchases
+            a(href="/logout") Logout
+    .maindiv
+      table.table(border='0', cellpadding='2', cellspacing='2', rules='all')
+        thead
+          tr
+            th Users
+            th Courses
+            th Approve
+            th Decline
+        tbody
+          each info in purchaseinfo
+            each course in info.coursename
+                tr
+                    td #{info.username}
+                    td= course
+                        td
+                            form(action=`/approve/${info._id}/${info.username}/${info.coursename}`)
+                                button.approve Approve
+                        td
+                            form(action=`/decline/${info.username}/${info.coursename}`)
+                                button.decline Decline
+

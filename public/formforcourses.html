@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form to Add Courses</title>
+</head>
+<body>
+    <h1>Form to Add Courses</h1>
+    <form action="/admin/addcourse" method="post">
+        <label for="coursename">Course Name:</label>
+        <input type="text" id="coursename" name="coursename" placeholder="Course Name" required>
+        <br>
+
+        <label for="coursetrainer">Course Trainer:</label>
+        <input type="text" id="coursetrainer" name="coursetrainer" placeholder="Course Trainer" required>
+        <br>
+
+        <label for="courseduration">Course Duration (in months):</label>
+        <input type="number" id="courseduration" name="courseduration" placeholder="Course Duration" required>
+        <br>
+
+        <label for="courseprice">Course Price:</label>
+        <input type="number" id="courseprice" name="courseprice" placeholder="Course Price" required>
+        <br>
+
+        <!-- <label for="courseprereq">Course Prerequisites (comma-separated):</label>
+        <input type="text" id="courseprereq" name="courseprereq" placeholder="Course Prerequisites">
+        <br> -->
+
+        <label for="coursesamplevideo">Course Sample Video URL:</label>
+        <input type="url" id="coursesamplevideo" name="coursesamplevideo" placeholder="Course Sample Video URL">
+        <br>
+
+        <label for="coursetype">Course Type:</label>
+        <input type="text" id="coursetype" name="coursetype" placeholder="Course Type (e.g., Paid)" required>
+        <br>
+
+        <label for="courselogourl">Course Logo URL:</label>
+        <input type="url" id="courselogourl" name="courselogourl" placeholder="Course Logo URL">
+        <br>
+
+        <label for="coursenickname">Course Nickname:</label>
+        <input type="text" id="coursenickname" name="coursenickname" placeholder="Course Nickname">
+        <br>
+
+        <label for="coursedescription">Course Description:</label>
+        <textarea id="coursedescription" name="coursedescription" placeholder="Course Description" rows="4" cols="50"></textarea>
+        <br>
+
+        <!-- <label for="courseroughtopics">Course Rough Topics (comma-separated):</label>
+        <input type="text" id="courseroughtopics" name="courseroughtopics" placeholder="Course Rough Topics">
+        <br> -->
+
+        <!-- <label for="coursecontenttitle">Course Content Titles (comma-separated):</label>
+        <input type="text" id="coursecontenttitle" name="coursecontenttitle" placeholder="Course Content Titles">
+        <br> -->
+
+        <!-- <label for="coursevideourls">Course Video URLs (comma-separated):</label>
+        <input type="text" id="coursevideourls" name="coursevideourls" placeholder="Course Video URLs">
+        <br> -->
+
+        <!-- <label for="coursevideos">Course Videos:</label>
+        <div id="coursevideos">
+            <div>
+                <input type="text" name="coursevideos[0][title]" placeholder="Video Title">
+                <input type="url" name="coursevideos[0][url]" placeholder="Video URL">
+            </div>
+        </div>
+        <button type="button" onclick="addVideoField()">Add Another Video</button> -->
+        <br><br>
+
+        <button type="submit">Add Course</button>
+    </form>
+
+    <!-- <script>
+        let videoCount = 1;
+        function addVideoField() {
+            const courseVideosDiv = document.getElementById('coursevideos');
+            const newDiv = document.createElement('div');
+            newDiv.innerHTML = `
+                <input type="text" name="coursevideos[${videoCount}][title]" placeholder="Video Title">
+                <input type="url" name="coursevideos[${videoCount}][url]" placeholder="Video URL">
+            `;
+            courseVideosDiv.appendChild(newDiv);
+            videoCount++;
+        }
+    </script> -->
+</body>
+</html>

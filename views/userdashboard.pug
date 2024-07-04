@@ -1,0 +1,79 @@
+doctype html
+html(lang='en')
+
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    // <title>Document</title>
+    style.
+      .title {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: xx-large;
+      }
+      .subtitle {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: xx-large;
+        /* text-decoration:underline; */
+      }
+      .maindiv {
+        display: flex;
+        /* border: 1px solid; */
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: row wrap;
+        justify-content: space-evenly;
+      }
+      .eachdiv {
+        margin: 5%;
+        display: flex;
+        /* width: 20%; */
+        height: 400px;
+        flex-direction: column;
+        border: 2px solid whitesmoke;
+        align-items: center;
+        justify-content: space-evenly;
+        border-radius: 5px;
+      }
+      .eachdiv:hover {
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        transition: transform 0.3s ease;
+        transform: translateY(-10px);
+      }
+      .coursetitle {
+        font-family: 'Times New Roman', Times, serif;
+        font-size: xx-large;
+        /* color:rgb(110, 0, 0); */
+      }
+      .viewmore {
+        /* margin:0px; */
+        text-decoration: none;
+        color: rgb(110, 0, 0);
+      }
+      .viewmore:hover {
+        text-decoration: underline;
+      }
+      .initial-links a {
+                margin-right: 1%; /* Add space to the right of each link */
+            }
+
+  body
+    h1.title #{cookies.username}'s Dash Board
+    div.initial-links
+                a(href="/") Home
+                a(href="/logout") Logout
+                a(href="/courses") View Courses
+    p.subtitle Your Courses :    
+    .maindiv
+      each course in userinfo.courses 
+        //- li= course
+        each info in courseinfo
+          if course == info.coursename
+            //- li= course
+            //- li= info.coursename
+            .eachdiv
+                img(width='100%', height='250px', src=`${info.courselogourl}`)
+                h1.coursetitle= info.coursename
+                each field in info.coursecontenttitle
+                  if field == info.coursecontenttitle[0]
+                    a.viewmore(href=`/${info.coursenickname}/${field}`) View More
+                //- a.viewmore(href=`/${info.coursenickname}`) View More

@@ -1,0 +1,14 @@
+html 
+    head 
+        style.
+            .initial-links a {
+                margin-right: 1%; /* Add space to the right of each link */
+            }
+    body 
+        h1 Admin #{cookies["adminusername"]}'s dashboard
+        div.initial-links
+            a(href="/") Home
+            a(href="/admin/register") Add Admin
+            a(href="/admin/addcourse") Add Course
+            a(href="/admin/approve") Approve Purchases
+            a(href="/logout") Logout

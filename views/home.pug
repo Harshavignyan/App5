@@ -1,0 +1,28 @@
+html
+    head
+    style.
+            .initial-links a {
+                margin-right: 1%; /* Add space to the right of each link */
+            }
+    body
+        h1 Home Page
+
+        if cookies.username
+            h3= "User is: " + cookies.username
+            div.initial-links
+                a(href="/user/dashboard") Dashboard
+                a(href="/logout") Logout
+                a(href="/courses") View Courses
+        else if cookies.adminusername
+            h3= "Admin is: " + cookies.adminusername
+            div.initial-links
+                a(href="/admin/dashboard") Dashboard
+                a(href="/logout") Logout
+        else
+            div.initial-links
+                a(href="/login") Login
+                a(href="/signup") Signup 
+        
+        //- ul 
+        //-     each info in courseinfo
+        //-         li= info.coursename

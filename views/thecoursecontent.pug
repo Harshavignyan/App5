@@ -1,0 +1,87 @@
+//- doctype html
+//- html
+//-   head
+//-     title Course Videos
+//-   body
+//-     p
+//-         each field in courseinfo.coursecontenttitle
+//-             li= field  
+//-                 a(href=`/${courseinfo.coursenickname}/${field}`) view
+
+//-     ul
+//-       each v in video
+//-         if videot == v.title
+//-             h1 #{v.title}
+//-             iframe(
+//-                     width="560",
+//-                     height="315",
+//-                     src=`${v.url}`,
+//-                     title="YouTube video player",
+//-                     frameborder="0",
+//-                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
+//-                     referrerpolicy="strict-origin-when-cross-origin",
+//-                     allowfullscreen
+//-                     )
+
+
+//- new code
+
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    //- title Document
+    style.
+      .maindiv {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+         
+      }
+      .leftdiv {
+          width: 80%;
+          height: 700px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+      .rightdiv {
+          width: 42%;
+          display: flex;
+          flex-direction: column;
+      }
+      li {
+          margin-left: 8%;
+          margin-bottom: 1%;
+          font-family: 'Times New Roman', Times, serif;
+          font-size: 22px;
+          list-style: number;
+      }
+      a{
+        text-decoration: none;
+        color: rgb(110, 0, 0);
+      }
+  body
+    .maindiv
+      .leftdiv
+          each v in video
+            if videot == v.title
+                h1 #{v.title}
+                iframe(
+                        width="940px",
+                        height="560px",
+                        src=`${v.url}`,
+                        title="YouTube video player",
+                        frameborder="0",
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
+                        referrerpolicy="strict-origin-when-cross-origin",
+                        allowfullscreen
+                        )
+      .rightdiv
+          p.title 
+            each field in courseinfo.coursecontenttitle
+              li  
+                  a(href=`/${courseinfo.coursenickname}/${field}`) #{field}
+
