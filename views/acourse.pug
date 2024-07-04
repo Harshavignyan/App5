@@ -93,21 +93,48 @@ html(lang='en')
         background-color: rgb(158, 160, 95);
       }
   body
-    h1.title #{eachcourseinfo.coursenickname} Course
-    .tddiv
-      button.typebutton= eachcourseinfo.coursetype
-      button.durationbutton #{eachcourseinfo.courseduration} months
-      button.pricebutton &#x20B9;#{eachcourseinfo.courseprice}
-    .maindiv
-      .contentdiv
-        h3.subhead1 Course Description
-        p.subheadp #{eachcourseinfo.coursedescription}
-        h3.subhead2 What you'll learn
-        ul
-          each roughinfo in eachcourseinfo.courseroughtopics
-            li.lis= roughinfo
-        //- p #{eachcourseinfo.courseroughtopics}
-      .stuffdiv
-        iframe(width='560', height='315', src=`${eachcourseinfo.coursesamplevideo}`, title='YouTube video player', frameborder='0', allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share', referrerpolicy='strict-origin-when-cross-origin', allowfullscreen='')
-        form(action=`/subscribe/${eachcourseinfo.coursename}`)
-          button.subscribe Subscribe
+    if cookies.username
+      //- li= "User is: " + cookies.username
+      h1.title #{eachcourseinfo.coursenickname} Course
+      .tddiv
+        button.typebutton= eachcourseinfo.coursetype
+        button.durationbutton #{eachcourseinfo.courseduration} months
+        button.pricebutton &#x20B9;#{eachcourseinfo.courseprice}
+      .maindiv
+        .contentdiv
+          h3.subhead1 Course Description
+          p.subheadp #{eachcourseinfo.coursedescription}
+          h3.subhead2 What you'll learn
+          ul
+            each roughinfo in eachcourseinfo.courseroughtopics
+              li.lis= roughinfo
+          //- p #{eachcourseinfo.courseroughtopics}
+        .stuffdiv
+          iframe(width='560', height='315', src=`${eachcourseinfo.coursesamplevideo}`, title='YouTube video player', frameborder='0', allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share', referrerpolicy='strict-origin-when-cross-origin', allowfullscreen='')
+          form(action=`/subscribe/${eachcourseinfo.coursename}`)
+            button.subscribe Subscribe
+    else if cookies.adminusername
+      //- li= "Admin is: " + cookies.adminusername
+      h1.title #{eachcourseinfo.coursenickname} Course
+      .tddiv
+        button.typebutton= eachcourseinfo.coursetype
+        button.durationbutton #{eachcourseinfo.courseduration} months
+        button.pricebutton &#x20B9;#{eachcourseinfo.courseprice}
+      .maindiv
+        .contentdiv
+          h3.subhead1 Course Description
+          p.subheadp #{eachcourseinfo.coursedescription}
+          h3.subhead2 What you'll learn
+          ul
+            each roughinfo in eachcourseinfo.courseroughtopics
+              li.lis= roughinfo
+          //- p #{eachcourseinfo.courseroughtopics}
+        .stuffdiv
+          iframe(width='560', height='315', src=`${eachcourseinfo.coursesamplevideo}`, title='YouTube video player', frameborder='0', allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share', referrerpolicy='strict-origin-when-cross-origin', allowfullscreen='')
+          //- form(action=`/subscribe/${eachcourseinfo.coursename}`)
+          //-   button.subscribe Subscribe
+    else
+            div.initial-links
+                a(href="/login") Login
+                a(href="/signup") Signup
+    

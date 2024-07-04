@@ -7,7 +7,9 @@ var users = require("./public/user.model")
 var admins = require("./public/admin.model")
 var purchases = require("./public/purchase.model")
 
-app.use(bodyparser.urlencoded({ extended: false }))
+app.use(bodyparser.urlencoded({
+    extended: false
+}))
 app.use(bodyparser.json())
 const cookieParser = require('cookie-parser')
 // load the cookie-parsing middleware
@@ -26,26 +28,32 @@ app.get("/", (req, res) => {
         details.password = req.cookies.password
         mongoose.connect("mongodb://localhost:27017").then((data) => {
             courses.find({}).then((coursedata) => {
-                res.render("home", { courseinfo: coursedata, cookies: details })
+                res.render("home", {
+                    courseinfo: coursedata,
+                    cookies: details
+                })
             })
         })
-    }
-
-    else if (req.cookies.adminusername) {
+    } else if (req.cookies.adminusername) {
         var details = {}
         details.adminusername = req.cookies.adminusername
         details.adminpassword = req.cookies.adminpassword
         mongoose.connect("mongodb://localhost:27017").then((data) => {
             courses.find({}).then((coursedata) => {
-                res.render("home", { courseinfo: coursedata, cookies: details })
+                res.render("home", {
+                    courseinfo: coursedata,
+                    cookies: details
+                })
             })
         })
-    }
-    else {
+    } else {
         var details = {}
         mongoose.connect("mongodb://localhost:27017").then((data) => {
             courses.find({}).then((coursedata) => {
-                res.render("home", { courseinfo: coursedata, cookies: details })
+                res.render("home", {
+                    courseinfo: coursedata,
+                    cookies: details
+                })
             })
         })
     }
@@ -86,20 +94,28 @@ app.post("/", (req, res) => {
     var pwd = req.body.password;
     // console.log(usr, pwd)
     mongoose.connect("mongodb://localhost:27017").then(() => {
-        users.findOne({ username: usr, $and: [{ password: pwd }] }).then((userdata) => {
+        users.findOne({
+            username: usr,
+            $and: [{
+                password: pwd
+            }]
+        }).then((userdata) => {
             if (userdata) {
                 res.cookie("username", userdata.username);
                 res.cookie("password", userdata.password);
                 res.redirect("/")
-            }
-            else {
-                admins.findOne({ adminusername: usr, $and: [{ adminpassword: pwd }] }).then((admindata) => {
+            } else {
+                admins.findOne({
+                    adminusername: usr,
+                    $and: [{
+                        adminpassword: pwd
+                    }]
+                }).then((admindata) => {
                     if (admindata) {
                         res.cookie("adminusername", admindata.adminusername);
                         res.cookie("adminpassword", admindata.adminpassword);
                         res.redirect("/")
-                    }
-                    else {
+                    } else {
                         res.redirect("/login-error")
                     }
                 })
@@ -117,8 +133,7 @@ app.get('/logout', (req, res) => {
         res.clearCookie('password');
         // Optional: Redirect to login page or send a response
         res.redirect("/")
-    }
-    else {
+    } else {
         res.clearCookie('adminusername');
         res.clearCookie('adminpassword');
         // Optional: Redirect to login page or send a response
@@ -126,6 +141,7 @@ app.get('/logout', (req, res) => {
     }
 
 })
+
 function admincheck(req, res, next) {
     if (req.cookies.adminusername) {
         next()
@@ -141,18 +157,26 @@ function usercheck(req, res, next) {
 app.get("/admin/dashboard", admincheck, (req, res) => {
     var details = {}
     details.adminusername = req.cookies.adminusername
-    res.render("admindashboard.pug", { cookies: details })
+    res.render("admindashboard.pug", {
+        cookies: details
+    })
 })
 
 app.get("/user/dashboard", usercheck, (req, res) => {
     var details = {}
     details.username = req.cookies.username
     mongoose.connect("mongodb://localhost:27017").then(() => {
-        users.findOne({username:req.cookies.username}).then((userdata) => {
+        users.findOne({
+            username: req.cookies.username
+        }).then((userdata) => {
             // console.log(userdata)
             courses.find().then((coursedata) => {
                 // console.log(coursedata)
-                res.render("userdashboard.pug",{ userinfo : userdata, courseinfo : coursedata, cookies: details })
+                res.render("userdashboard.pug", {
+                    userinfo: userdata,
+                    courseinfo: coursedata,
+                    cookies: details
+                })
             })
         })
     })
@@ -206,22 +230,77 @@ app.post("/admin/addcourse", admincheck, (req, res) => {
     })
 })
 
-app.get("/courses", usercheck, (req, res) => {
-    mongoose.connect("mongodb://localhost:27017").then((data) => {
-        courses.find({}).then((coursesdata) => {
-            res.render("courses.pug", { coursesinfo: coursesdata })
+function userOrAdminCheck(req, res, next) {
+    if (req.cookies && (req.cookies.username || req.cookies.adminusername)) {
+        next();
+    }
+}
+
+app.get("/courses", userOrAdminCheck, (req, res) => {
+    if (req.cookies.username) {
+        var details = {}
+        details.username = req.cookies.username
+        details.password = req.cookies.password
+        mongoose.connect("mongodb://localhost:27017").then((data) => {
+            courses.find({}).then((coursesdata) => {
+                console.log(details)
+                res.render("courses.pug", {
+                    coursesinfo: coursesdata,
+                    cookies: details
+                })
+            })
         })
-    })
+    } else {
+        var details = {}
+        details.adminusername = req.cookies.adminusername
+        details.adminpassword = req.cookies.adminpassword
+        mongoose.connect("mongodb://localhost:27017").then((data) => {
+            courses.find({}).then((coursesdata) => {
+                res.render("courses.pug", {
+                    coursesinfo: coursesdata,
+                    cookies: details
+                })
+            })
+        })
+    }
+
 })
 
-app.get("/courses/:coursenickname", usercheck, (req, res) => {
-    // console.log(req.params.coursenickname)
-    mongoose.connect("mongodb://localhost:27017").then((data) => {
-        courses.findOne({ coursenickname: req.params.coursenickname }).then((coursedata) => {
-            // console.log(coursedata)
-            res.render("acourse.pug", { eachcourseinfo: coursedata })
+app.get("/courses/:coursenickname/viewmore", userOrAdminCheck, (req, res) => {
+    if (req.cookies.username) {
+        var details = {}
+        details.username = req.cookies.username
+        details.password = req.cookies.password
+        // console.log(req.params.coursenickname)
+        mongoose.connect("mongodb://localhost:27017").then((data) => {
+            courses.findOne({
+                coursenickname: req.params.coursenickname
+            }).then((coursedata) => {
+                // console.log(coursedata)
+                res.render("acourse.pug", {
+                    eachcourseinfo: coursedata,
+                    cookies: details
+                })
+            })
         })
-    })
+    } else {
+        var details = {}
+        details.adminusername = req.cookies.adminusername
+        details.adminpassword = req.cookies.adminpassword
+        // console.log(req.params.coursenickname)
+        mongoose.connect("mongodb://localhost:27017").then((data) => {
+            courses.findOne({
+                coursenickname: req.params.coursenickname
+            }).then((coursedata) => {
+                // console.log(coursedata)
+                res.render("acourse.pug", {
+                    eachcourseinfo: coursedata,
+                    cookies: details
+                })
+            })
+        })
+    }
+
 })
 
 app.get("/subscribe/:coursename", usercheck, (req, res) => {
@@ -239,12 +318,45 @@ app.get("/subscribe/:coursename", usercheck, (req, res) => {
         })
 })
 
+app.get("/courses/:coursenickname/modify", admincheck, (req, res) => {
+    mongoose.connect("mongodb://localhost:27017").then((data) => {
+        courses.findOne({
+            coursenickname: req.params.coursenickname
+        }).then((coursedata) => {
+            res.render("modifycourse.pug", {
+                courseinfo: coursedata
+            })
+        })
+    })
+})
+
+app.post("/:coursenickname/addvideo", admincheck, (req, res) => {
+    console.log(req.body.title, req.body.url)
+    mongoose.connect("mongodb://localhost:27017").then((data) => {
+        courses.findOneAndUpdate({
+            coursenickname: req.params.coursenickname
+        }, {
+            $push: {
+                coursevideos: {
+                    title: req.body.title,
+                    url: req.body.url
+                },
+                coursecontenttitle: req.body.title
+            }
+        }).then((coursedata) => {
+            res.redirect("/courses")
+        })
+    })
+})
+
 app.get("/admin/approve", admincheck, (req, res) => {
     // console.log(req.cookies.username)
     mongoose.connect("mongodb://localhost:27017").then((data) => {
         purchases.find({}).then((purchasedata) => {
             // console.log(purchasedata)
-            res.render("purchases.pug", { purchaseinfo: purchasedata })
+            res.render("purchases.pug", {
+                purchaseinfo: purchasedata
+            })
         })
     })
 })
@@ -252,11 +364,18 @@ app.get("/admin/approve", admincheck, (req, res) => {
 app.get("/approve/:id/:username/:coursename", admincheck, (req, res) => {
     // console.log(req.params.coursename, req.params.username)
     mongoose.connect("mongodb://localhost:27017").then((data) => {
-        users.findOneAndUpdate(
-            { username: req.params.username }, // Filter
-            { $push: { "courses": req.params.coursename } }, // Update: Push new course to courses array
+        users.findOneAndUpdate({
+                username: req.params.username
+            }, // Filter
+            {
+                $push: {
+                    "courses": req.params.coursename
+                }
+            }, // Update: Push new course to courses array
         ).then(() => {
-            purchases.findByIdAndDelete({ _id: req.params.id }).then((overalldata) => {
+            purchases.findByIdAndDelete({
+                _id: req.params.id
+            }).then((overalldata) => {
                 // console.log(overalldata)
                 res.redirect("/admin/approve")
             })
@@ -268,22 +387,30 @@ app.get("/decline/:username/:coursename", admincheck, (req, res) => {
     // console.log(req.params.coursename, req.params.username)
     mongoose.connect("mongodb://localhost:27017").then((data) => {
         // console.log(userdata)
-        purchases.findOneAndDelete({ username: req.params.username }).then((overalldata) => {
+        purchases.findOneAndDelete({
+            username: req.params.username
+        }).then((overalldata) => {
             res.redirect("/admin/approve")
         })
     })
 })
 
-app.get("/:nickname/:info", usercheck, (req,res) => {
+app.get("/:nickname/:info", usercheck, (req, res) => {
     // console.log(req.params.nickname)
     mongoose.connect("mongodb://localhost:27017").then((data) => {
-        courses.findOne({coursenickname : req.params.nickname}).then((coursedata) => {
+        courses.findOne({
+            coursenickname: req.params.nickname
+        }).then((coursedata) => {
             // console.log(coursedata)
             var videodata = coursedata.coursevideos
             console.log(videodata)
             var videotitle = req.params.info
             console.log(videotitle)
-            res.render("thecoursecontent.pug", {courseinfo : coursedata, video : videodata, videot : videotitle})
+            res.render("thecoursecontent.pug", {
+                courseinfo: coursedata,
+                video: videodata,
+                videot: videotitle
+            })
         })
     })
 })

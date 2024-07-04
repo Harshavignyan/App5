@@ -95,20 +95,46 @@ html(lang='en')
                 margin-right: 1%; /* Add space to the right of each link */
             }
   body
-    h1 Courses Page
-    div.initial-links
-                a(href="/") Home
-                a(href="/logout") Logout
-    .maindiv
-      each info in coursesinfo
-        .eachdiv
-          .imgdiv
-            img(width='100%', height='100%', src=info.courselogourl)
-          .contentdiv
-            .titlediv
-              h3.coursetitle= info.coursename
-              a.viewmorelink(href=`/courses/${info.coursenickname}`) View More
-            .tddiv
-              button.typebutton= info.coursetype
-              button.durationbutton #{info.courseduration} months
-              button.pricebutton &#x20B9;#{info.courseprice}
+    if cookies.username
+      //- li= "User is: " + cookies.username
+      h1 Courses Page
+      div.initial-links
+                  a(href="/") Home
+                  a(href="/logout") Logout
+      .maindiv
+        each info in coursesinfo
+          .eachdiv
+            .imgdiv
+              img(width='100%', height='100%', src=info.courselogourl)
+            .contentdiv
+              .titlediv
+                h3.coursetitle= info.coursename
+                a.viewmorelink(href=`/courses/${info.coursenickname}/viewmore`) View More
+              .tddiv
+                button.typebutton= info.coursetype
+                button.durationbutton #{info.courseduration} months
+                button.pricebutton &#x20B9;#{info.courseprice}
+    else if cookies.adminusername
+      //- li= "Admin is: " + cookies.adminusername
+      h1 Courses Page
+      div.initial-links
+                  a(href="/") Home
+                  a(href="/logout") Logout
+      .maindiv
+        each info in coursesinfo
+          .eachdiv
+            .imgdiv
+              img(width='100%', height='100%', src=info.courselogourl)
+            .contentdiv
+              .titlediv
+                h3.coursetitle= info.coursename
+                a.viewmorelink(href=`/courses/${info.coursenickname}/viewmore`) View More
+                a.viewmorelink(href=`/courses/${info.coursenickname}/modify`) Modify
+              .tddiv
+                button.typebutton= info.coursetype
+                button.durationbutton #{info.courseduration} months
+                button.pricebutton &#x20B9;#{info.courseprice}
+    else
+            div.initial-links
+                a(href="/login") Login
+                a(href="/signup") Signup 

@@ -1,0 +1,15 @@
+html 
+    head 
+        style. 
+            li{
+                list-style: none;
+            }
+    body 
+        h1 Insert new video
+        form(action=`/${courseinfo.coursenickname}/addvideo` method="post")
+            li= title 
+                input(name="title" placeholder="title")
+            li= url 
+                input(name="url" placeholder="url")
+            br
+            button add video
