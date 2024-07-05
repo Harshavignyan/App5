@@ -331,7 +331,7 @@ app.get("/courses/:coursenickname/modify", admincheck, (req, res) => {
 })
 
 app.post("/:coursenickname/addvideo", admincheck, (req, res) => {
-    console.log(req.body.title, req.body.url)
+    // console.log(req.body.title, req.body.url)
     mongoose.connect("mongodb://localhost:27017").then((data) => {
         courses.findOneAndUpdate({
             coursenickname: req.params.coursenickname
@@ -342,6 +342,24 @@ app.post("/:coursenickname/addvideo", admincheck, (req, res) => {
                     url: req.body.url
                 },
                 coursecontenttitle: req.body.title
+            }
+        }).then((coursedata) => {
+            res.redirect("/courses")
+        })
+    })
+})
+
+app.get("/:coursenickname/:title/deletevideo", admincheck, (req, res) => {
+    // console.log(req.params)
+    mongoose.connect("mongodb://localhost:27017").then((data) => {
+        courses.findOneAndUpdate({
+            coursenickname: req.params.coursenickname
+        }, {
+            $pull: {
+                coursevideos: {
+                    title: req.params.title
+                },
+                coursecontenttitle: req.params.title
             }
         }).then((coursedata) => {
             res.redirect("/courses")
