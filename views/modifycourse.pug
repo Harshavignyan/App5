@@ -1,15 +1,114 @@
-html 
-    head 
-        style. 
-            li{
-                list-style: none;
-            }
-    body 
-        h1 Insert new video
-        form(action=`/${courseinfo.coursenickname}/addvideo` method="post")
-            li= title 
-                input(name="title" placeholder="title")
-            li= url 
-                input(name="url" placeholder="url")
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    style.
+      ul li {
+        list-style: none;
+      }
+      table {
+        width: 100%;
+      }
+      td {
+        text-align: center;
+        padding: 15px;
+      }
+      button {
+        cursor: pointer;
+      }
+      .insertdiv {
+        width: 100%;
+      }
+      .deletediv {
+        margin-top: 5%;
+        width: 100%;
+        height: 350px;
+        overflow: auto;
+      }
+      .maindiv {
+        display: flex;
+        flex-direction: row;
+      }
+      .leftdiv {
+        width: 60%;
+        display: flex;
+        flex-direction: column;
+      }
+      .rightdiv {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .titlesdiv {
+        margin-left: 20px;
+      }
+      .changebutton {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        margin-top: 3%;
+      }
+    title Insert New Video
+  body
+    .maindiv
+      .leftdiv
+        .insertdiv
+          h1 Insert New Video
+          form(action=`/${courseinfo.coursenickname}/addvideo` method="post")
+            ul
+              li
+                //- label(for="title") Title
+                input(type="text" id="title" name="title" placeholder="title")
+              li
+                //- label(for="url") URL
+                input(type="text" id="url" name="url" placeholder="url")
             br
-            button add video
+            button(type="submit") Add Video
+        br
+        br
+        .deletediv
+          h1 Delete A Video
+          br
+          table.deletetable(rules="all")
+            tr
+              th Video Title
+              th.deletecol Delete
+            each info in courseinfo.coursecontenttitle
+              tr
+                td= info
+                td.deletecol
+                  form(action=`/${courseinfo.coursenickname}/${info}/deletevideo` method="get")
+                    button(type="submit") Delete
+      .rightdiv
+        .titlesdiv
+          h1 Shuffle Videos
+          table(rules="all")
+            tr
+              th Videotitle
+              th Up
+              th Down
+            each video, index in courseinfo.coursevideos
+              if index == 0
+                tr
+                  td= video.title
+                  td
+                  td
+                    form(action=`/${courseinfo.coursenickname}/${video.title}/${index}/movedown` method="post")
+                      button Down
+              else if index == courseinfo.coursevideos.length - 1
+                tr
+                  td= video.title
+                  td
+                    form(action=`/${courseinfo.coursenickname}/${video.title}/${index}/moveup` method="post")
+                      button Up
+                  td
+              else
+                tr
+                  td= video.title
+                  td
+                    form(action=`/${courseinfo.coursenickname}/${video.title}/${index}/moveup` method="post")
+                      button Up
+                  td
+                    form(action=`/${courseinfo.coursenickname}/${video.title}/${index}/movedown` method="post")
+                      button Down

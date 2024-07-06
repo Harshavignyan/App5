@@ -330,6 +330,53 @@ app.get("/courses/:coursenickname/modify", admincheck, (req, res) => {
     })
 })
 
+app.post("/:coursenickname/:videotitle/:index/moveup", admincheck, (req, res) => {
+    mongoose.connect("mongodb://localhost:27017").then(() => {
+        courses.findOne({
+            coursenickname: req.params.coursenickname
+        }).then((course) => {
+
+            const videoIndex = parseInt(req.params.index);
+            if (videoIndex > 0) {
+                // Swap the video with the one before it
+                [course.coursevideos[videoIndex - 1], course.coursevideos[videoIndex]] = [course.coursevideos[videoIndex], course.coursevideos[videoIndex - 1]];
+
+                // Swap the titles in coursecontenttitle
+                [course.coursecontenttitle[videoIndex - 1], course.coursecontenttitle[videoIndex]] = [course.coursecontenttitle[videoIndex], course.coursecontenttitle[videoIndex - 1]];
+
+                // Save the updated course document
+                course.save().then(() => {
+                    res.redirect("/courses")
+                })
+            }
+        })
+    })
+})
+
+app.post("/:coursenickname/:videotitle/:index/movedown", admincheck, (req, res) => {
+    mongoose.connect("mongodb://localhost:27017").then(() => {
+        courses.findOne({
+            coursenickname: req.params.coursenickname
+        }).then((course) => {
+
+            const videoIndex = parseInt(req.params.index);
+            if (videoIndex < course.coursevideos.length - 1) {
+                // Swap the video with the one after it
+                [course.coursevideos[videoIndex + 1], course.coursevideos[videoIndex]] = [course.coursevideos[videoIndex], course.coursevideos[videoIndex + 1]];
+
+                // Swap the titles in coursecontenttitle
+                [course.coursecontenttitle[videoIndex + 1], course.coursecontenttitle[videoIndex]] = [course.coursecontenttitle[videoIndex], course.coursecontenttitle[videoIndex + 1]];
+
+
+                // Save the updated course document
+                course.save().then(() => {
+                    res.redirect("/courses")
+                })
+            }
+        })
+    })
+})
+
 app.post("/:coursenickname/addvideo", admincheck, (req, res) => {
     console.log(req.body.title, req.body.url)
     mongoose.connect("mongodb://localhost:27017").then((data) => {

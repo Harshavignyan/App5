@@ -51,6 +51,6 @@ html(lang="en")
               allowfullscreen
             )
       .rightdiv
-        each field in courseinfo.coursecontenttitle
+        each v in video
           li  
-            a(href=`/${courseinfo.coursenickname}/${field}`) #{field}
+            a(href=`/${courseinfo.coursenickname}/${v.title}`) #{v.title}
