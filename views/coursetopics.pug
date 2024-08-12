@@ -1,0 +1,56 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    // <title>Document</title>
+    style.
+      .listmaindiv{
+        /* border:1px solid; */
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        align-items: center;
+      }
+      .listatopic{
+        border:1px solid;
+        width: 25%;
+        height: 20%;
+        margin: 4%;
+        box-sizing: border-box;
+        border: 2px solid whitesmoke;
+        border-top: 0px;
+        border-radius: 0px 12px 12px;         
+      }
+      .listatopic:hover {
+        
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        transition: transform 0.3s ease;
+        transform: translateY(-5px);
+      }
+      .listtopicimage{
+        /* border:1px solid; */
+         
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .initial-links a {
+                margin-right: 1%; /* Add space to the right of each link */
+            }
+  body
+    if cookies.username
+      //- li= "User is: " + cookies.username
+      h1 Topics Page
+      div.initial-links
+                  a(href="/") Home
+                  a(href="/logout") Logout
+                  a(href="/user/dashboard") Dashboard
+    .listmaindiv
+      each info in topicsinfo
+        .listatopic
+          .listtopicimage
+            img(width="100%", src=`${info.image}`)
+            a(href=`/topics/${info.topicname}`) View More

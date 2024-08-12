@@ -97,10 +97,11 @@ html(lang='en')
   body
     if cookies.username
       //- li= "User is: " + cookies.username
-      h1 #{coursesinfo} Courses Page
+      h1 #{topicinfo} Courses Page
       div.initial-links
                   a(href="/") Home
                   a(href="/logout") Logout
+                  a(href="/user/dashboard") Dashboard
       .maindiv
         each info in coursesinfo
           .eachdiv
@@ -109,15 +110,15 @@ html(lang='en')
             .contentdiv
               .titlediv
                 h3.coursetitle= info.coursename
-                a.viewmorelink(href=`/courses/${info.coursenickname}/viewmore`) View More
+                a.viewmorelink(href=`/courses/${info.coursenickname}/${info.coursename}`) View More
               .tddiv
-                //- button.typebutton= info.coursetype
+                button.typebutton= info.coursetype
                 //- button.durationbutton #{info.courseduration} months
-                a.viewmorelink(href=`/courses/${info.coursenickname}/free`) Free Version
+                //- a.viewmorelink(href=`/courses/${info.coursenickname}/free`) Free Version
                 button.pricebutton &#x20B9;#{info.courseprice}
     else if cookies.adminusername
       //- li= "Admin is: " + cookies.adminusername
-      h1 #{coursesinfo.coursenickname} Courses Page
+      h1 Courses Page
       div.initial-links
                   a(href="/") Home
                   a(href="/logout") Logout
@@ -129,12 +130,12 @@ html(lang='en')
             .contentdiv
               .titlediv
                 h3.coursetitle= info.coursename
-                a.viewmorelink(href=`/courses/${info.coursenickname}/viewmore`) View More
+                a.viewmorelink(href=`/courses/${info.coursenickname}/${info.coursename}`) View More
                 a.viewmorelink(href=`/courses/${info.coursenickname}/modify`) Modify
               .tddiv
-                //- button.typebutton= info.coursetype
+                button.typebutton= info.coursetype
                 //- button.durationbutton #{info.courseduration} months
-                a.viewmorelink(href=`/courses/${info.coursenickname}/free`) Free Version
+                //- a.viewmorelink(href=`/courses/${info.coursenickname}/free`) Free Version
                 button.pricebutton &#x20B9;#{info.courseprice}
     else
             div.initial-links

@@ -83,18 +83,20 @@ html(lang='en')
           tr
             th Users
             th Courses
-            th Approve
-            th Decline
+            //- th Approve
+            //- th Decline
         tbody
           each info in purchaseinfo
             each course in info.coursename
                 tr
                     td #{info.username}
                     td= course
-                        td
-                            form(action=`/approve/${info._id}/${info.username}/${info.coursename}`)
-                                button.approve Approve
-                        td
-                            form(action=`/decline/${info.username}/${info.coursename}`)
-                                button.decline Decline
+                        //- td
+                        //-     form(action=`/approve/${info._id}/${info.username}/${info.coursename}`)
+                        //-         button.approve Approve
+                        //- td
+                        //-     form(action=`/decline/${info.username}/${info.coursename}`)
+                        //-         button.decline Decline
+                        td 
+                          a(href=`/admin/${info.username}/${course}`) View More
 

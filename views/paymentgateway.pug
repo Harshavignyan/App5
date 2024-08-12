@@ -1,0 +1,112 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    style.
+      body {
+        font-family: 'Times New Roman', Times, serif;
+      }
+      .paymaindiv {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+      }
+      .payleftdiv {
+        width: 50%;
+        height: 500px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .payrightdiv {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .screenshotdiv {
+        width: 60%;
+        height: 40%;
+        border: 4px;
+        border-style: double;
+        border-color: darkolivegreen;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .upperdiv {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+      }
+      .disdiv {
+        width: 20%;
+        border: 4px;
+        border-style: double;
+        border-color: darkolivegreen;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+      }
+      .paydiv {
+        width: 30%;
+        border: 4px;
+        border-style: double;
+        border-color: darkolivegreen;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+      }
+      p {
+        font-size: x-large;
+      }
+      .initial-links a {
+                margin-right: 1%; /* Add space to the right of each link */
+        }
+
+  body
+    div.initial-links
+                a(href="/") Home
+                a(href="/user/dashboard") Dashboard
+                a(href="/logout") Logout
+                //- a(href="/courses") View Courses
+                a(href="/recordedcourses") Recorded Courses
+                a(href="/uploadfiles") Upload Files
+    hr
+    br
+    br
+    each info in userinfo.courses
+        if `${info.coursename}` === courseinfo
+            .upperdiv
+                .disdiv
+                    h1.fawst Discount:
+                    p.fawst #{info.discount}%
+                .paydiv
+                    h1.second Total:
+                    p.second #{info.discountedprice}/-
+                .paydiv
+                    h1.second Due:
+                    p.second #{remainingAmount}/-
+                .paydiv
+                    h1.second Pay By:
+                    p.second #{duedateinfo}
+            .paymaindiv
+                .payleftdiv
+                    if `${info.proof}` == "false"
+                        .screenshotdiv
+                            form(action="/upload", method="post", enctype="multipart/form-data")
+                                input(type="hidden", name="coursename", value=`${courseinfo}`)
+                                input(type="file", name="file")
+                                br
+                                br
+                                br
+                                button Submit
+                    else if `${info.proof}` == "true" 
+                        h1 File Uploaded Successfully!
+                        p Kindly wait for the responce...
+                .payrightdiv

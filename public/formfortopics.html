@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form to Add Courses</title>
+</head>
+<body>
+    <h1>Form to Add Courses</h1>
+    <form action="/admin/addtopic" method="post">
+        <label for="topicname">Topic Name:</label>
+        <input type="text" id="topicname" name="topicname" placeholder="Topic Name" required>
+        <br>
+
+        <label for="image">Image:</label>
+        <input type="text" id="image" name="image" placeholder="image url" required>
+        <br>
+
+        <button type="submit">Add Course</button>
+    </form>
+
+    <!-- <script>
+        let videoCount = 1;
+        function addVideoField() {
+            const courseVideosDiv = document.getElementById('coursevideos');
+            const newDiv = document.createElement('div');
+            newDiv.innerHTML = `
+                <input type="text" name="coursevideos[${videoCount}][title]" placeholder="Video Title">
+                <input type="url" name="coursevideos[${videoCount}][url]" placeholder="Video URL">
+            `;
+            courseVideosDiv.appendChild(newDiv);
+            videoCount++;
+        }
+    </script> -->
+</body>
+</html>

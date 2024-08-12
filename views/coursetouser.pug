@@ -1,0 +1,35 @@
+doctype html
+html
+  head
+  body
+    h1 #{userinfo.username}
+    p E-mail ID: #{userinfo.email}
+    hr
+    h1 #{courseinfo.coursename}
+    h3 Actual Price:
+    p #{courseinfo.courseprice} /-
+    - var existingCourse = userinfo.courses.find(course => course.coursename === courseinfo.coursename);
+    form(action=`/${userinfo.username}/${courseinfo.coursename}/discounting` method="post")
+        p Discount Percentage: 
+        input(type="number" name="discount" placeholder="Enter Discount Percentage" value=`${existingCourse ? existingCourse.discount : ''}`)
+        br
+        p After Discount Price:
+        input(type="number" name="discountedprice" placeholder="Enter After Discount Price" value=`${existingCourse ? existingCourse.discountedprice : ''}`)
+        br
+        p Status:
+        input(type="text" name="status" placeholder="Enter the status like: pending" value=`${existingCourse ? existingCourse.status : ''}`)
+        br
+        p Amount Paid:
+        input(type="number" name="amountpaid" placeholder="Enter the paid amount" value=`${existingCourse ? existingCourse.amountpaid : ''}`)
+        br
+        p Due Date:
+        input(type="date" name="duedate" placeholder="Enter the due date" value=`${existingCourse ? existingCourse.duedate : ''}`)
+        br
+        p Proof:
+        input(type="text" name="proof" placeholder="Set Proof: False" value=`${existingCourse ? existingCourse.proof : ''}`)
+        if existingCourse && existingCourse.proof
+          p Proof File: 
+          img(width="1000px" src=`/public/uploads/${userinfo.username}/${courseinfo.coursename}/${existingCourse.file}`)
+        br
+        br
+        button Update

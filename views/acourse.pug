@@ -95,7 +95,7 @@ html(lang='en')
   body
     if cookies.username
       //- li= "User is: " + cookies.username
-      h1.title #{eachcourseinfo.coursenickname} Course
+      h1.title #{eachcourseinfo.coursename} Course
       .tddiv
         button.typebutton= eachcourseinfo.coursetype
         button.durationbutton #{eachcourseinfo.courseduration} months
@@ -111,7 +111,7 @@ html(lang='en')
           //- p #{eachcourseinfo.courseroughtopics}
         .stuffdiv
           iframe(width='560', height='315', src=`${eachcourseinfo.coursesamplevideo}`, title='YouTube video player', frameborder='0', allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share', referrerpolicy='strict-origin-when-cross-origin', allowfullscreen='')
-          form(action=`/subscribe/${eachcourseinfo.coursename}`)
+          form(action=`/subscribe/${eachcourseinfo.coursename}/${eachcourseinfo.coursetype}`)
             button.subscribe Subscribe
     else if cookies.adminusername
       //- li= "Admin is: " + cookies.adminusername

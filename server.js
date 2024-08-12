@@ -4,13 +4,16 @@ const app = express();
 const bodyparser = require("body-parser");
 const courses = require("./public/course.model");
 const users = require("./public/user.model");
+const topics = require("./public/topic.model");
 const admins = require("./public/admin.model");
 const purchases = require("./public/purchase.model");
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
-const multer = require('multer')
-var fs = require("fs")
+const path = require('path');
+const multer = require('multer');
+const { format } = require('date-fns');
+var fs = require("fs");
 
 const SECRET_KEY = crypto.randomBytes(32).toString('hex');
 
@@ -18,7 +21,7 @@ app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 app.use(cookieParser());
 app.set("view engine", "pug");
-app.use(express.static(__dirname + "/public"));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Middleware to check authentication
 function checkAuthentication(req, res, next, tokenType) {
@@ -158,7 +161,7 @@ app.get("/user/dashboard", userCheck, (req, res) => {
     });
 });
 
-app.get("/uploadfiles", userCheck, (req,res) => {
+app.get("/uploadfiles", userCheck, (req, res) => {
     res.sendFile(__dirname + "/public/userfileform.html")
 })
 
@@ -167,19 +170,19 @@ app.get("/uploadfiles", userCheck, (req,res) => {
 // Configure Multer to handle file uploads
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        // console.log(req.user)
         // Ensure `req.user` is set before this point
         if (!req.user || !req.user.username) {
             return callback(new Error('No user found'), null);
         }
 
         const username = req.user.username;
-        const path = `./uploads/${username}/`;
+        const coursename = req.body.coursename;
+        const uploadPath = path.join(__dirname, '/public/uploads', username, coursename);
 
         // Create the directory if it doesn't exist
-        fs.mkdirSync(path, { recursive: true });
+        fs.mkdirSync(uploadPath, { recursive: true });
 
-        callback(null, path);
+        callback(null, uploadPath);
     },
     filename: (req, file, callback) => {
         callback(null, file.originalname);
@@ -190,7 +193,15 @@ const upload = multer({ storage });
 
 // Example route for file upload
 app.post("/upload", userCheck, upload.single("file"), (req, res) => {
-    res.send("File uploaded successfully!");
+    mongoose.connect("mongodb://localhost:27017").then(() => {
+        users.findOneAndUpdate({ username: req.user.username, 'courses.coursename': req.body.coursename }, {
+            $set: { 'courses.$.proof': true,
+                    'courses.$.file': req.file.originalname
+            }
+        }).then((userdata) => {
+            res.redirect("/user/dashboard");
+        })
+    })
 });
 
 app.get("/admin/register", adminCheck, (req, res) => {
@@ -219,16 +230,70 @@ app.post("/admin/addcourse", adminCheck, (req, res) => {
     });
 });
 
-app.get("/subscribe/:coursename", userCheck, (req, res) => {
-    var username = req.user.username;
-    var coursename = req.params.coursename;
+app.get("/admin/addtopic", adminCheck, (req, res) => {
+    res.sendFile(__dirname + "/public/formfortopics.html");
+});
+
+app.post("/admin/addtopic", adminCheck, (req, res) => {
     mongoose.connect("mongodb://localhost:27017").then(() => {
-        const newPurchase = new purchases({ username: username, coursename: coursename });
-        newPurchase.save().then(() => {
-            res.redirect("/");
+        var newTopic = new topics(req.body);
+        newTopic.save().then(() => {
+            res.redirect("/admin/dashboard");
         });
     });
 });
+
+app.get("/subscribe/:coursename/:coursetype", userCheck, (req, res) => {
+    var username = req.user.username;
+    var coursename = req.params.coursename;
+    var coursetype = req.params.coursetype;
+    if (coursetype === "Free") {
+        mongoose.connect("mongodb://localhost:27017").then(() => {
+            users.findOneAndUpdate(
+                { username: username },
+                {
+                    $push:
+                    {
+                        courses:
+                        {
+                            coursename: coursename,
+                            discount: 0,
+                            discountedprice: 0
+                        }
+                    }
+                }
+            ).then(() => {
+                res.redirect("/user/dashboard")
+            })
+        })
+    }
+    else {
+        mongoose.connect("mongodb://localhost:27017").then(() => {
+            const newPurchase = new purchases({ username: username, coursename: coursename });
+            newPurchase.save().then(() => {
+                res.redirect("/user/dashboard");
+            });
+        });
+    }
+});
+
+app.get("/payment/:coursename", userCheck, (req, res) => {
+    var coursename = req.params.coursename;
+    mongoose.connect("mongodb://localhost:27017").then(() => {
+        users.findOne({ username: req.user.username }).then((userdata) => {
+            if (userdata) {
+                var course = userdata.courses.find(course => course.coursename === coursename);
+                if (course) {
+                    const dueDate = new Date(course.duedate); // Assuming the due date is stored in the 'duedate' field
+                    const formattedDueDate = format(dueDate, 'EEE MMM dd yyyy');
+                    // console.log(formattedDueDate)
+                    const remainingAmount = course.discountedprice - course.amountpaid;
+                    res.render("paymentgateway", { courseinfo: coursename, userinfo: userdata, duedateinfo: formattedDueDate, x: course, remainingAmount: remainingAmount });
+                }
+            }
+        })
+    })
+})
 
 app.get("/courses/:coursenickname/modify", adminCheck, (req, res) => {
     mongoose.connect("mongodb://localhost:27017").then((data) => {
@@ -323,6 +388,65 @@ app.get("/decline/:username/:coursename", adminCheck, (req, res) => {
     });
 });
 
+app.get("/admin/:username/:course", adminCheck, (req, res) => {
+    var username = req.params.username;
+    var coursename = req.params.course;
+    mongoose.connect("mongodb://localhost:27017").then(() => {
+        users.findOne({ username: username }).then((userdata) => {
+            const course = userdata.courses.find(course => course.coursename === coursename);
+            courses.findOne({ coursename: coursename }).then((coursedata) => {
+                res.render("coursetouser.pug", { userinfo: userdata, courseinfo: coursedata, course: course })
+            })
+        })
+    })
+})
+
+app.post("/:username/:coursename/discounting", adminCheck, (req, res) => {
+    var coursename = req.params.coursename;
+    var discount = req.body.discount;
+    var discountedprice = req.body.discountedprice;
+    var amountpaid = req.body.amountpaid;
+    var duedate = new Date(req.body.duedate);
+    // console.log(duedate)
+    var status = req.body.status;
+    var proof = req.body.proof;
+    mongoose.connect("mongodb://localhost:27017").then(() => {
+        users.findOne({ username: req.params.username }).then(user => {
+            if (!user) {
+                throw new Error('User not found');
+            }
+
+            // Find the index of the course in the user's courses array
+            const courseIndex = user.courses.findIndex(course => course.coursename === coursename);
+
+            if (courseIndex !== -1) {
+                // Course exists, update it
+                user.courses[courseIndex].discount = discount;
+                user.courses[courseIndex].discountedprice = discountedprice;
+                user.courses[courseIndex].amountpaid = amountpaid;
+                user.courses[courseIndex].duedate = duedate;
+                user.courses[courseIndex].status = status;
+                user.courses[courseIndex].proof = proof;
+            } else {
+                // Course does not exist, add it
+                user.courses.push({
+                    coursename: coursename,
+                    discount: discount,
+                    discountedprice: discountedprice,
+                    amountpaid: amountpaid,
+                    duedate: duedate,
+                    status: status,
+                    proof: proof
+                });
+            }
+
+            // Save the updated user document
+            return user.save();
+        })
+        res.redirect("/admin/approve");
+    })
+})
+
 app.get("/:nickname/:info", userCheck, (req, res) => {
     mongoose.connect("mongodb://localhost:27017").then(() => {
         courses.findOne({ coursenickname: req.params.nickname }).then((coursedata) => {
@@ -338,6 +462,32 @@ app.get("/:nickname/:info", userCheck, (req, res) => {
 });
 
 // 7. Route to display all courses for users and admins
+app.get("/recordedcourses", userOrAdminCheck, (req, res) => {
+    mongoose.connect("mongodb://localhost:27017").then((data) => {
+        topics.find({}).then((topicsdata) => {
+            let details = req.user ? { username: req.user.username } : { adminusername: req.admin.adminusername };
+            res.render("coursetopics.pug", {
+                topicsinfo: topicsdata,
+                cookies: details
+            });
+        })
+    })
+})
+
+app.get("/topics/:topicname", userOrAdminCheck, (req, res) => {
+    var topic = req.params.topicname
+    mongoose.connect("mongodb://localhost:27017").then((data) => {
+        courses.find({ coursenickname: req.params.topicname }).then((thattopiccourses) => {
+            let details = req.user ? { username: req.user.username } : { adminusername: req.admin.adminusername };
+            res.render("thattopiccourses.pug", {
+                coursesinfo: thattopiccourses,
+                topicinfo: topic,
+                cookies: details
+            });
+        })
+    })
+})
+
 app.get("/courses", userOrAdminCheck, (req, res) => {
     mongoose.connect("mongodb://localhost:27017").then((data) => {
         courses.find({}).then((coursesdata) => {
@@ -351,9 +501,9 @@ app.get("/courses", userOrAdminCheck, (req, res) => {
 });
 
 // 8. Route to view more details of a specific course for users and admins
-app.get("/courses/:coursenickname/viewmore", userOrAdminCheck, (req, res) => {
+app.get("/courses/:coursenickname/:coursename", userOrAdminCheck, (req, res) => {
     mongoose.connect("mongodb://localhost:27017").then((data) => {
-        courses.findOne({ coursenickname: req.params.coursenickname }).then((coursedata) => {
+        courses.findOne({ coursenickname: req.params.coursenickname, coursename: req.params.coursename }).then((coursedata) => {
             let details = req.user ? { username: req.user.username } : { adminusername: req.admin.adminusername };
             res.render("acourse.pug", {
                 eachcourseinfo: coursedata,

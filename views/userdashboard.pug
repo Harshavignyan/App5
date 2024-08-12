@@ -55,26 +55,38 @@ html(lang='en')
       .initial-links a {
                 margin-right: 1%; /* Add space to the right of each link */
             }
+      .tab-space {
+        padding-left: 1em; /* Adjust the value to control the tab width */
+      }
 
   body
     h1.title #{cookies.username}'s Dash Board
     div.initial-links
                 a(href="/") Home
                 a(href="/logout") Logout
-                a(href="/courses") View Courses
+                //- a(href="/courses") View Courses
+                a(href="/recordedcourses") Recorded Courses
                 a(href="/uploadfiles") Upload Files
+    p.subtitle Your Pending Payments:
+    each course in userinfo.courses
+      if `${course.status}` === "pending"
+          li #{course.coursename}:
+              span.tab-space 
+              a(href=`/payment/${course.coursename}`) Paynow
+
     p.subtitle Your Courses :    
     .maindiv
-      each course in userinfo.courses 
-        //- li= course
-        each info in courseinfo
-          if course == info.coursename
-            //- li= course
-            //- li= info.coursename
-            .eachdiv
-                img(width='100%', height='250px', src=`${info.courselogourl}`)
-                h1.coursetitle= info.coursename
-                each field in info.coursecontenttitle
-                  if field == info.coursecontenttitle[0]
-                    a.viewmore(href=`/${info.coursenickname}/${field}`) View More
-                //- a.viewmore(href=`/${info.coursenickname}`) View More
+      each course in userinfo.courses
+        each courseobj in course.coursename 
+          //- li= course
+          each info in courseinfo
+            if courseobj == info.coursename
+              //- li= course
+              //- li= info.coursename
+              .eachdiv
+                  img(width='100%', height='250px', src=`${info.courselogourl}`)
+                  h1.coursetitle= info.coursename
+                  each field in info.coursecontenttitle
+                    if field == info.coursecontenttitle[0]
+                      a.viewmore(href=`/${info.coursenickname}/${field}`) View More
+                  //- a.viewmore(href=`/${info.coursenickname}`) View More
